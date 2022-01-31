@@ -5,20 +5,48 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
     [SerializeField] float _speed = 3f;
     [SerializeField] Transform _spriteTransform;
+    [SerializeField] GameObject _staff;
+    [SerializeField] float _swingDuration = 1f;
 
-    private Vector2 _input;
+    private Vector2 _movementInput;
+    private WaitForSeconds _swingDelayYield;
+
+    private void Awake() {
+        _swingDelayYield = new WaitForSeconds(_swingDuration);
+    }
 
     private void Update() {
-        _input.x = Input.GetAxis("Horizontal");
-        _input.y = Input.GetAxis("Vertical");
+
+        // If we're NOT in the middle of a swing,
+        if (!_staff.activeSelf) {
+
+            // Get input
+            _movementInput.x = Input.GetAxis("Horizontal");
+            _movementInput.y = Input.GetAxis("Vertical");
+
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                StartCoroutine(Swing());
+            }
+        }
+        else {
+            // Halt movement
+            _movementInput = Vector2.zero;
+        }
     }
 
     private void FixedUpdate() {
-        transform.Translate(_speed * Time.deltaTime * _input.normalized);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_input), Time.deltaTime * _rotationSpeed);
-        if (_input != Vector2.zero) {
-            float angle = Mathf.Atan2(_input.y, _input.x) * Mathf.Rad2Deg;
+        transform.Translate(_speed * Time.deltaTime * _movementInput.normalized);
+
+        // Facing
+        if (_movementInput != Vector2.zero) {
+            float angle = Mathf.Atan2(_movementInput.y, _movementInput.x) * Mathf.Rad2Deg;
             _spriteTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
+    }
+
+    private IEnumerator Swing() {
+        _staff.SetActive(true);
+        yield return _swingDelayYield;
+        _staff.SetActive(false);
     }
 }
