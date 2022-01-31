@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMovement : MonoBehaviour {
+    [SerializeField] float _speed = 3f;
+    [SerializeField] float _rotationSpeed = 40f;
+    [SerializeField] Transform _spriteTransform;
+
+    private Vector2 _input;
+
+    private void Update() {
+        _input.x = Input.GetAxis("Horizontal");
+        _input.y = Input.GetAxis("Vertical");
+    }
+
+    private void FixedUpdate() {
+        transform.Translate(_speed * Time.deltaTime * _input.normalized);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(_input), Time.deltaTime * _rotationSpeed);
+        if (_input != Vector2.zero) {
+            float angle = Mathf.Atan2(_input.y, _input.x) * Mathf.Rad2Deg;
+            _spriteTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        }
+    }
+}
