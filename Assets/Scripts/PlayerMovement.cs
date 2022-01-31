@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
     [SerializeField] float _speed = 3f;
-    [SerializeField] float _rotationSpeed = 40f;
     [SerializeField] Transform _spriteTransform;
 
     private Vector2 _input;
