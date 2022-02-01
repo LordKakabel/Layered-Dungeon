@@ -9,22 +9,36 @@ public class EnemyMovement : MonoBehaviour
 
     private Vector2 _movementInput;
     private PlayerMovement _player;
+    private Rigidbody2D _rigidbody;
 
     private void Start() {
+        _rigidbody = GetComponent<Rigidbody2D>();
         _player = FindObjectOfType<PlayerMovement>();
     }
 
     private void Update() {
-        _movementInput = _player.transform.position - transform.position;
+        _movementInput = (_player.transform.position - transform.position).normalized;
     }
 
     private void FixedUpdate() {
-        transform.Translate(_speed * Time.deltaTime * _movementInput.normalized);
+        _rigidbody.velocity = _movementInput * _speed;
         
         // Facing
         if (_movementInput != Vector2.zero) {
             float angle = Mathf.Atan2(_movementInput.y, _movementInput.x) * Mathf.Rad2Deg;
             _spriteTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
+    }
+
+    public IEnumerator Knockback(float knockbackDuration, float knockbackPower, Transform obj) {
+        float timer = 0;
+
+        while (knockbackDuration > timer) {
+            timer += Time.deltaTime;
+            Vector2 direction = (obj.transform.position - transform.position).normalized;
+            _rigidbody.AddForce(-direction * knockbackPower);
+        }
+
+        yield return 0;
     }
 }

@@ -10,9 +10,11 @@ public class PlayerMovement : MonoBehaviour {
 
     private Vector2 _movementInput;
     private WaitForSeconds _swingDelayYield;
+    private Rigidbody2D _rigidbody;
 
     private void Awake() {
         _swingDelayYield = new WaitForSeconds(_swingDuration);
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void Update() {
@@ -35,7 +37,8 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        transform.Translate(_speed * Time.deltaTime * _movementInput.normalized);
+        //transform.Translate(_speed * Time.deltaTime * _movementInput.normalized);
+        _rigidbody.velocity = _movementInput.normalized * _speed;
 
         // Facing
         if (_movementInput != Vector2.zero) {
