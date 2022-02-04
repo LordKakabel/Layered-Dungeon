@@ -6,10 +6,13 @@ public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] float _speed = 3f;
     [SerializeField] Transform _spriteTransform;
+    [SerializeField] float _stunDuration = 1f;
 
     private Vector2 _movementInput;
     private PlayerMovement _player;
     private Rigidbody2D _rigidbody;
+    private enum State { Normal, Knockedback, Stunned }
+    private State _state = State.Normal;
 
     private void Start() {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -21,8 +24,24 @@ public class EnemyMovement : MonoBehaviour
     }
 
     private void FixedUpdate() {
+        switch (_state) {
+            case State.Normal:
+                Movement();
+                break;
+            case State.Knockedback:
+                break;
+            case State.Stunned:
+                _rigidbody.velocity = Vector2.zero;
+                _rigidbody.angularVelocity = 0;
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void Movement() {
         _rigidbody.velocity = _movementInput * _speed;
-        
+
         // Facing
         if (_movementInput != Vector2.zero) {
             float angle = Mathf.Atan2(_movementInput.y, _movementInput.x) * Mathf.Rad2Deg;
@@ -31,14 +50,38 @@ public class EnemyMovement : MonoBehaviour
     }
 
     public IEnumerator Knockback(float knockbackDuration, float knockbackPower, Transform obj) {
-        float timer = 0;
+        _state = State.Knockedback;
 
-        while (knockbackDuration > timer) {
-            timer += Time.deltaTime;
+        float timer = Time.time + knockbackDuration;
+
+        Debug.Log(timer + " " + knockbackDuration);
+
+        while (Time.time < timer) {
+            //timer += Time.deltaTime;
             Vector2 direction = (obj.transform.position - transform.position).normalized;
             _rigidbody.AddForce(-direction * knockbackPower);
+
+            Debug.Log(timer + " " + knockbackDuration);
         }
 
-        yield return 0;
+        Debug.Log(timer + " " + knockbackDuration);
+
+        //_rigidbody.isKinematic = true;
+
+        yield return null;
+
+        StartCoroutine(Stun());
+
+        //_rigidbody.isKinematic = false;
+
+        Debug.Log("I'm done");
+        //_rigidbody.velocity = Vector2.zero;
+        //_rigidbody.angularVelocity = 0;
+    }
+
+    public IEnumerator Stun() {
+        _state = State.Stunned;
+        yield return new WaitForSeconds(_stunDuration);
+        _state = State.Normal;
     }
 }

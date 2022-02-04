@@ -37,7 +37,6 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        //transform.Translate(_speed * Time.deltaTime * _movementInput.normalized);
         _rigidbody.velocity = _movementInput.normalized * _speed;
 
         // Facing
