@@ -11,7 +11,7 @@ public class Staff : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.CompareTag("Enemy")) {
             EnemyMovement enemy = collision.GetComponent<EnemyMovement>();
-            StartCoroutine(enemy.Knockback(_knockbackTime, _knockbackForce, _parentTransform));
+            enemy.Knockback(_knockbackTime, _knockbackForce, _parentTransform);
         }
     }
 }

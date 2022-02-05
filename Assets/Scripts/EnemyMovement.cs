@@ -49,40 +49,22 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    public IEnumerator Knockback(float knockbackDuration, float knockbackPower, Transform obj) {
+    public void Knockback(float knockbackDuration, float knockbackPower, Transform obj) {
+        StartCoroutine(KnockbackCoroutine(knockbackDuration, knockbackPower, obj));
+    }
+
+    private IEnumerator KnockbackCoroutine(float knockbackDuration, float knockbackPower, Transform obj) {
         _state = State.Knockedback;
-
-        //float timer = Time.time + knockbackDuration;
-
-        //Debug.Log(timer + " " + knockbackDuration);
 
         Vector2 direction = (obj.transform.position - transform.position).normalized;
         _rigidbody.AddForce(-direction * knockbackPower);
 
-        /*while (Time.time < timer) {
-            //timer += Time.deltaTime;
-            Vector2 direction = (obj.transform.position - transform.position).normalized;
-            _rigidbody.AddForce(-direction * knockbackPower);
-
-            Debug.Log(timer + " " + knockbackDuration);
-        }*/
-
-        //Debug.Log(timer + " " + knockbackDuration);
-
-        //_rigidbody.isKinematic = true;
-
         yield return new WaitForSeconds(knockbackDuration);
 
         StartCoroutine(Stun());
-
-        //_rigidbody.isKinematic = false;
-
-        //Debug.Log("I'm done");
-        //_rigidbody.velocity = Vector2.zero;
-        //_rigidbody.angularVelocity = 0;
     }
 
-    public IEnumerator Stun() {
+    private IEnumerator Stun() {
         _state = State.Stunned;
         yield return new WaitForSeconds(_stunDuration);
         _state = State.Normal;

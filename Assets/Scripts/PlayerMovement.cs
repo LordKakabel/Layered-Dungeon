@@ -38,6 +38,7 @@ public class PlayerMovement : MonoBehaviour {
 
     private void FixedUpdate() {
         _rigidbody.velocity = _movementInput.normalized * _speed;
+        _rigidbody.angularVelocity = 0;
 
         // Facing
         if (_movementInput != Vector2.zero) {
