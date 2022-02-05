@@ -13,8 +13,10 @@ public class EnemyMovement : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private enum State { Normal, Knockedback, Stunned }
     private State _state = State.Normal;
+    private float _spriteOffset;
 
     private void Start() {
+        _spriteOffset = _spriteTransform.eulerAngles.z;
         _rigidbody = GetComponent<Rigidbody2D>();
         _player = FindObjectOfType<PlayerMovement>();
     }
@@ -24,6 +26,7 @@ public class EnemyMovement : MonoBehaviour
     }
 
     private void FixedUpdate() {
+        _rigidbody.angularVelocity = 0;
         switch (_state) {
             case State.Normal:
                 Movement();
@@ -32,7 +35,7 @@ public class EnemyMovement : MonoBehaviour
                 break;
             case State.Stunned:
                 _rigidbody.velocity = Vector2.zero;
-                _rigidbody.angularVelocity = 0;
+                //_rigidbody.angularVelocity = 0;
                 break;
             default:
                 break;
@@ -45,7 +48,7 @@ public class EnemyMovement : MonoBehaviour
         // Facing
         if (_movementInput != Vector2.zero) {
             float angle = Mathf.Atan2(_movementInput.y, _movementInput.x) * Mathf.Rad2Deg;
-            _spriteTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            _spriteTransform.rotation = Quaternion.AngleAxis(angle + _spriteOffset, Vector3.forward);
         }
     }
 
