@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+
+    [field: SerializeField] public int Layer { get; private set; } = 1;
+
     [SerializeField] float _speed = 3f;
     [SerializeField] Transform _spriteTransform;
     [SerializeField] GameObject _staff;
@@ -51,5 +54,10 @@ public class PlayerMovement : MonoBehaviour {
         _staff.SetActive(true);
         yield return _swingDelayYield;
         _staff.SetActive(false);
+    }
+
+    public void NewLayer(int layer) {
+        Layer = layer;
+        GameManager.Instance.NewLayerEntrered(layer);
     }
 }
